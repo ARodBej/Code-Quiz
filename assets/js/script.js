@@ -3,10 +3,16 @@ var nextBtn = document.getElementById('nextBtn');
 var submitBtn = document.getElementById('submitBtn');
 var highscoreBtn = document.getElementById('highscoreBtn');
 var userScore = document.getElementById('userScore');
-var quizQuestions = document.getElementById("quizQuestions");
+var quizQuestions = document.getElementById("quiz-questions");
+var questionAnswers = document.getElementById("question-answers");
+var titleItem = document.getAnimations("title-item");
+var nextQuestion;
+var count = 50;
+var score = 0;
+var currentindex = 0;
 var timer = document.getElementById("timer");
-var timecounter = document.getElementById("timecounter");
-
+var timeCounter = document.getElementById("timeCounter");
+var inputInitials = document.getElementById("inputInitials");
 var allScores = [];
 var storedScores = JSON.parse(localStorage.getItem("userData"));
 var questions = [
@@ -41,17 +47,107 @@ var questions = [
         answer: "/*this is a comment*/"
     },
 ]
-//setInterval (myTimer, 1000);
 
-
+var timeinterval;
+//starting quiz
 startBtn.addEventListener("click", startQuiz);
 function startQuiz() {
+    if(storedScores !== null) {
+        allScores = storedScores
+    }
+    startBtn.classList.add("d-none")
+    timeCounter.classList.remove("d-none")
+    quizQuestions.classList.remove("d-none")
+    nextQuestion = questions[currentindex]
+    console.log(nextQuestion.title)
+
+        displayQuestion(nextQuestion)
+
+    gametime()
+}
+//scoreBtn.addEventListener("click", function(){
+    //let name = document.getElementById("userScore").value 
+    //scorePage(name, count)
+//});
+//timer
+function gametime () {
+    timeinterval = setInterval(function() {
+        timeCounter.innerText = count
+        count--;
+        if(count<0) {
+            endGame()
+        }
+        }, 1000);
+    
+}
+//displaying the questions
+function displayQuestion(questions) {
+    questionAnswers.innerHTML = "";
+    titleItem.innerText = questions.title
+    questions.choices.forEach(choice => {
+        var button = document.createElement("button")
+        button.textContent = choice
+        button.addEventListener("click", checkAnswer)
+
+    //button.className
+    questionAnswers.append(button)
+    });
+}
+//checking answers
+function checkAnswer(event){
+    var userChoice = event.target.innerText
+    var currentQuestion = questions[currentindex]
+    var answer = currentQuestion.answer
+    if(userChoice === answer) {
+        alert("Correct!")
+    } else {
+        alert("Wrong!")
+        count-=3
+    }
+    currentindex++ 
+    if(currentindex<questions.length) {
+         nextQuestion = questions[currentindex]
+    displayQuestion(nextQuestion)
+    } else {
+        endGame()
+    }
+   
 
 }
-function showResults () {}
+//displaying the next question
+function displayQuestion(e) {
+    currentindex++
+    if(currentindex < questions.length) {
+        correction(e.target.innerText == nextQuestion.answer)
+        questionAnswers.innerHTML = ""
+        if(currentindex < questionAnswers.length) {
+            nextQuestion = questions[currentindex]
+            displayQuestion(nextQuestion)
+        } else {
+            currentindex = 0
+            displayQuestion(nextQuestion)
+        }
+    } else {
+        endGame()
+    }
+}
+//score page
+function scorePage(a, b) {
+    var userData = {
+        inits:a,
+        userScore:b
+    };
+    allScores.push(userData);
 
-//display quiz 
-startQuiz();       
+    localStorage.setItem("userData", JSON.stringify(allScores));
 
+}
+//ending the game
+function endGame(){
+    timeCounter.classList.add("d-none")
+    quizQuestions.classList.add("d-none")
+    scorePage.classList.remove("d-none")
+    clearInterval(timeinterval)
+}
 //on submit, show results
-submitBtn.addEventListener('click', showResults);
+//submitBtn.addEventListener('click', showResults);
