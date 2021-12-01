@@ -7,9 +7,10 @@ var quizQuestions = document.getElementById("quiz-questions");
 var questionAnswers = document.getElementById("question-answers");
 var titleItem = document.getAnimations("title-item");
 var nextQuestion;
-var count = 50;
+var count = 60;
 var score = 0;
 var currentindex = 0;
+var alert = document.getElementById("alert");
 var timer = document.getElementById("timer");
 var timeCounter = document.getElementById("timeCounter");
 var inputInitials = document.getElementById("inputInitials");
@@ -52,29 +53,35 @@ var timeinterval;
 //starting quiz
 startBtn.addEventListener("click", startQuiz);
 function startQuiz() {
+    //console.log("hello");
     if(storedScores !== null) {
         allScores = storedScores
-    }
+    } else {
     startBtn.classList.add("d-none")
     timeCounter.classList.remove("d-none")
-    quizQuestions.classList.remove("d-none")
+    quizQuestions.classList.remove("d-done")
     nextQuestion = questions[currentindex]
-    console.log(nextQuestion.title)
+
+        //console.log(nextQuestion.title)
+        //stuck on how to display question
+        //document.getElementById('quiz-questions').style.display = "block";
 
         displayQuestion(nextQuestion)
 
-    gametime()
+    gametime();
+    }
 }
-//scoreBtn.addEventListener("click", function(){
-    //let name = document.getElementById("userScore").value 
-    //scorePage(name, count)
-//});
+//highscore button
+highscoreBtn.addEventListener("click", function(){
+    let name = document.getElementById("highscoreBtn").value 
+    scorePage(name, count)
+});
 //timer
 function gametime () {
     timeinterval = setInterval(function() {
         timeCounter.innerText = count
         count--;
-        if(count<0) {
+        if(count < 0) {
             endGame()
         }
         }, 1000);
@@ -89,10 +96,12 @@ function displayQuestion(questions) {
         button.textContent = choice
         button.addEventListener("click", checkAnswer)
 
-    //button.className
-    questionAnswers.append(button)
+    
+    //questionAnswers.append(button)
+
     });
 }
+
 //checking answers
 function checkAnswer(event){
     var userChoice = event.target.innerText
@@ -111,26 +120,8 @@ function checkAnswer(event){
     } else {
         endGame()
     }
-   
+}
 
-}
-//displaying the next question
-function displayQuestion(e) {
-    currentindex++
-    if(currentindex < questions.length) {
-        correction(e.target.innerText == nextQuestion.answer)
-        questionAnswers.innerHTML = ""
-        if(currentindex < questionAnswers.length) {
-            nextQuestion = questions[currentindex]
-            displayQuestion(nextQuestion)
-        } else {
-            currentindex = 0
-            displayQuestion(nextQuestion)
-        }
-    } else {
-        endGame()
-    }
-}
 //score page
 function scorePage(a, b) {
     var userData = {
@@ -140,14 +131,12 @@ function scorePage(a, b) {
     allScores.push(userData);
 
     localStorage.setItem("userData", JSON.stringify(allScores));
-
 }
 //ending the game
 function endGame(){
-    timeCounter.classList.add("d-none")
-    quizQuestions.classList.add("d-none")
-    scorePage.classList.remove("d-none")
+    timeCounter.classlist.add("d-none")
+    quizQuestions.classlist.add("d-none")
+    scorePage.classlist.remove("d-none")
     clearInterval(timeinterval)
 }
-//on submit, show results
 //submitBtn.addEventListener('click', showResults);
