@@ -1,19 +1,20 @@
-var startBtn = document.getElementById('startBtn');
-var nextBtn = document.getElementById('nextBtn');
-var submitBtn = document.getElementById('submitBtn');
-var highscoreBtn = document.getElementById('highscoreBtn');
-var userScore = document.getElementById('userScore');
+var startBtn = document.getElementById("startBtn");
+var nextBtn = document.getElementById("nextBtn");
+var submitBtn = document.getElementById("submitBtn");
+var highscoreBtn = document.getElementById("highscoreBtn");
+var userScore = document.getElementById("userScore");
 var quizQuestions = document.getElementById("quiz-questions");
 var questionAnswers = document.getElementById("question-answers");
-var titleItem = document.getAnimations("title-item");
+var titleItem = document.getElementById("title-item");
 var nextQuestion;
 var count = 60;
 var score = 0;
 var currentindex = 0;
-var alert = document.getElementById("alert");
-var timer = document.getElementById("timer");
+var info = document.getElementById("info");
+//var alert = document.getElementById("alert");
+var timer = document.getElementById("Timer");
 var timeCounter = document.getElementById("timeCounter");
-var inputInitials = document.getElementById("inputInitials");
+var inputInitials = document.getElementById("input-initials");
 var allScores = [];
 var storedScores = JSON.parse(localStorage.getItem("userData"));
 var questions = [
@@ -56,20 +57,27 @@ function startQuiz() {
     //console.log("hello");
     if(storedScores !== null) {
         allScores = storedScores
-    } else {
+    } 
     startBtn.classList.add("d-none")
     timeCounter.classList.remove("d-none")
     quizQuestions.classList.remove("d-done")
+    //info.classList.add("d-none")
     nextQuestion = questions[currentindex]
+    while (document.getElementById("quiz-questions").firstChild) {
+        document.getElementById("quiz-questions").removeChild(document.getElementById("quiz-questions").firstChild)
+    }
+
 
         //console.log(nextQuestion.title)
         //stuck on how to display question
         //document.getElementById('quiz-questions').style.display = "block";
+        //console.log("hello 1");
 
         displayQuestion(nextQuestion)
+        //console.log("hello 3");
 
-    gametime();
-    }
+    
+    
 }
 //highscore button
 highscoreBtn.addEventListener("click", function(){
@@ -89,17 +97,37 @@ function gametime () {
 }
 //displaying the questions
 function displayQuestion(questions) {
-    questionAnswers.innerHTML = "";
-    titleItem.innerText = questions.title
-    questions.choices.forEach(choice => {
-        var button = document.createElement("button")
-        button.textContent = choice
-        button.addEventListener("click", checkAnswer)
+    //titleItem.innerText = questions.title
+    //console.log("hello")
+    questions.choices.forEach(questions => {
+        var button = document.createElement("BUTTON")
+        //console.log("hello 1")
+        button.className = "btn-primary"
+        button.innerText = questions
+        //document.questionAnswers.appendChild(button)
+        button.addEventListener("click", nextQuestion)
 
     
-    //questionAnswers.append(button)
+    document.getElementById("quiz-questions").appendChild(button);
+    document.getElementById("quiz-questions").style.visibility = "visible";
 
     });
+}
+function displayNextQuestion(e) {
+    currentindex++
+    if(currentindex < questions.length) {
+        correction(e.targt.innerText == nextQuestion.answer)
+        quizQuestions.innerHTML=""
+        if(currentindex < questions.length) {
+            nextQuestion = questions[currentindex]
+            displayQuestion(nextQuestion)
+        } else {
+            currentindex = 0
+            displayQuestion(nextQuestion)
+        }
+    } else {
+        endGame()
+    }
 }
 
 //checking answers
@@ -131,12 +159,13 @@ function scorePage(a, b) {
     allScores.push(userData);
 
     localStorage.setItem("userData", JSON.stringify(allScores));
+    location = "score.html";
 }
 //ending the game
 function endGame(){
     timeCounter.classlist.add("d-none")
     quizQuestions.classlist.add("d-none")
-    scorePage.classlist.remove("d-none")
+    //scorePage.classlist.remove("d-none")
     clearInterval(timeinterval)
 }
 //submitBtn.addEventListener('click', showResults);
